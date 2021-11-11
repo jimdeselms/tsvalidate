@@ -1,4 +1,6 @@
-const NAMED_VALIDATORS = {}
+// This set of named validators should include all the built-in validators for typescript
+const NAMED_VALIDATORS = {
+}
 
 const OK = { status: "ok" }
 const FAIL = { status: "fail" }
@@ -66,6 +68,22 @@ function validateArray(arrayType, array) {
   return FAIL
 }
 
+function Tuple(...types) {
+  return (o) => validateTuple(types, o)
+}
+function validateTuple(types, array) {
+  if (!Array.isArray(array)) return FAIL
+  if (array.length !== types.length) return FAIL
+
+  for (let i = 0; i < types.length; i++) {
+    if (types[i](array[i]).status !== "ok") {
+      return FAIL
+    }
+  }
+
+  return OK
+}
+
 function Union(...types) {
   return (o) => validateUnion(types, o)
 }
@@ -113,5 +131,6 @@ module.exports = {
   Any,
   Object: ObjectValidator,
   Optional,
-  Array: ArrayValidator
+  Array: ArrayValidator,
+  Tuple
 }

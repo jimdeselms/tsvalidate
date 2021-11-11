@@ -63,6 +63,14 @@ describe("convertTypeAnnotations", () => {
         expectPass(v({ age: 20 }))
         expectFail(v({ age: 'dave' }))
     })
+
+    it("tuple type", async () => {
+        const v = await buildValidatorForType("[number, string]")
+        expectPass(v([5,"5"]))
+        expectFail(v([5]))
+        expectFail(v([5, 5]))
+        expectFail(v(5))
+    })
 })
 
 async function buildValidatorForType(type) {

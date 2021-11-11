@@ -11,6 +11,8 @@ function convertTypeAnnotation(annotation) {
             return Type.Union(...annotation.types.map(convertTypeAnnotation))
         case "TSArrayType":
             return Type.Array(convertTypeAnnotation(annotation.elementType))
+        case "TSTupleType":
+            return Type.Tuple(...annotation.elementTypes.map(convertTypeAnnotation))
         case "TSNeverKeyword":
             return Type.Never
         case "TSAnyKeyword":
