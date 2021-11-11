@@ -53,6 +53,16 @@ describe("convertTypeAnnotations", () => {
         expectFail(v({ name: 'fred', age: 'fred' }))
         expectFail(v(5))
     })
+
+    it("type literal with optional member", async () => {
+        const v = await buildValidatorForType("{ name?: string, age: number }")
+        expectPass(v({ name: 'fred', age: 4 }))
+        expectPass(v({ age: 4, name: 'fred' }))
+
+        expectFail(v({ name: 'fred' }))
+        expectPass(v({ age: 20 }))
+        expectFail(v({ age: 'dave' }))
+    })
 })
 
 async function buildValidatorForType(type) {
@@ -69,10 +79,10 @@ async function buildValidatorForType(type) {
     return convertTypeAnnotation(id.typeAnnotation.typeAnnotation)
 }
 
-async function expectPass(expr) {
+function expectPass(expr) {
     expect(expr.status).toBe("ok")
 }
 
-async function expectFail(expr) {
+function expectFail(expr) {
     expect(expr.status).toBe("fail")
 }

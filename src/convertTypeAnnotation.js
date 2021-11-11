@@ -20,7 +20,10 @@ function convertTypeAnnotation(annotation) {
         case "TSTypeLiteral":
             const typeObj = {}
             for (const node of annotation.members) {
-                typeObj[node.key.name] = convertTypeAnnotation(node.typeAnnotation.typeAnnotation)
+                const innerValidator = convertTypeAnnotation(node.typeAnnotation.typeAnnotation)
+                typeObj[node.key.name] = node.optional
+                    ? Type.Optional(innerValidator)
+                    : innerValidator
             }
             return Type.Object(typeObj)
         default:
