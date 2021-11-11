@@ -1,15 +1,17 @@
 const babel = require('@babel/core')
 
-const code = "typetest<string>('hi')"
+const code = "tsValidate<number>(5)"
 
 function myPlugin() {
     return {
         visitor: {
-            Identifier(path) {
-                path.node.name = path.node.name + "1"
-            },
             CallExpression(path) {
-                let i = 0
+                if (path.node?.callee?.name === "tsValidate") {
+                    if (path.node.typeParameters?.params?.length === 1) {
+                        const annotation = path.node.typeParameters.params[0]
+                        console.log(annotation)
+                    }
+                }
             }
         }
     }

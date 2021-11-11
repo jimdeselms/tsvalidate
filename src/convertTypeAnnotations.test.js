@@ -28,6 +28,14 @@ describe("convertTypeAnnotations", () => {
         expectPass(v([1]))
         expectPass(v([1,2]))
     })
+
+    it("array builtin", async () => {
+        const v = await buildValidatorForType("Array<number>")
+        expectPass(v([]))
+        expectPass(v([1]))
+        expectPass(v([1,2]))
+    })
+
     it("never", async () => {
         const v = await buildValidatorForType("never")
         expectFail(v(5))
@@ -38,7 +46,7 @@ describe("convertTypeAnnotations", () => {
     })
 
     it("named", async () => {
-        Type.registerType("Name", Type.String)
+        Type.registerType("Name", () => Type.String)
         const v = await buildValidatorForType("Name")
         expectPass(v("HELLO"))
     })
@@ -70,6 +78,12 @@ describe("convertTypeAnnotations", () => {
         expectFail(v([5]))
         expectFail(v([5, 5]))
         expectFail(v(5))
+    })
+
+    it("constant", async () => {
+        const v = await buildValidatorForType("5")
+        expectPass(v(5))
+        expectFail(v(6))
     })
 })
 

@@ -61,7 +61,7 @@ describe("validate", () => {
     })
 
     test("named", () => {
-        Type.registerType("Name", Type.String)
+        Type.registerType("Name", () => Type.String)
         const validate = Type.Named("Name")
         expectPass(validate("Jim"))
         expectFail(validate(50))

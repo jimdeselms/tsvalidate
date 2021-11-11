@@ -1,4 +1,4 @@
-const { tsRestType } = require('@babel/types')
+const { tsRestType, tupleTypeAnnotation } = require('@babel/types')
 const Type = require('.')
 
 function convertTypeAnnotation(annotation) {
@@ -13,12 +13,14 @@ function convertTypeAnnotation(annotation) {
             return Type.Array(convertTypeAnnotation(annotation.elementType))
         case "TSTupleType":
             return Type.Tuple(...annotation.elementTypes.map(convertTypeAnnotation))
+        case "TSLiteralType":
+            return Type.Literal(annotation.literal.value)
         case "TSNeverKeyword":
             return Type.Never
         case "TSAnyKeyword":
             return Type.Any
         case "TSTypeReference":
-            return Type.Named(annotation.typeName.name)
+            return Type.Named(annotation.typeName.name, annotation.typeParameters?.params?.map?.(convertTypeAnnotation) ?? [])
         case "TSTypeLiteral":
             const typeObj = {}
             for (const node of annotation.members) {

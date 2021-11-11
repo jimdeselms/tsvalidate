@@ -1,5 +1,6 @@
 // This set of named validators should include all the built-in validators for typescript
 const NAMED_VALIDATORS = {
+  Array: (params) => ArrayValidator(params[0])
 }
 
 const OK = { status: "ok" }
@@ -9,9 +10,9 @@ function registerType(name, validator) {
   NAMED_VALIDATORS[name] = validator
 }
 
-function Named(name) {
+function Named(name, typeParameters=[]) {
   return (o) => {
-    const validator = NAMED_VALIDATORS[name]
+    const validator = NAMED_VALIDATORS[name]?.(typeParameters)
     return validator?.(o) ?? FAIL
   }
 }
@@ -119,11 +120,20 @@ function validateOptional(type, o) {
   return type(o)
 }
 
+function Literal(val) {
+  return (o) => validateLiteral(val, o)
+}
+
+function validateLiteral(expected, actual) {
+  return actual === expected ? OK : FAIL
+}
+
 module.exports = {
   registerType,
   Named,
   String,
   Number,
+  Literal,
   Union,
   Intersection,
   Boolean,
