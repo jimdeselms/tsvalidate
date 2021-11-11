@@ -1,3 +1,4 @@
+const { tsRestType } = require('@babel/types')
 const Type = require('.')
 
 function convertTypeAnnotation(annotation) {
@@ -14,6 +15,14 @@ function convertTypeAnnotation(annotation) {
             return Type.Never
         case "TSAnyKeyword":
             return Type.Any
+        case "TSTypeReference":
+            return Type.Named(annotation.typeName.name)
+        case "TSTypeLiteral":
+            const typeObj = {}
+            for (const node of annotation.members) {
+                typeObj[node.key.name] = convertTypeAnnotation(node.typeAnnotation.typeAnnotation)
+            }
+            return Type.Object(typeObj)
         default:
             throw new Error("Unknown annotation type " + annotation?.type)
     }

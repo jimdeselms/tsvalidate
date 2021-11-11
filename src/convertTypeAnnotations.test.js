@@ -1,5 +1,6 @@
 const babel = require('@babel/core')
 const { convertTypeAnnotation } = require('./convertTypeAnnotation')
+const Type = require('.')
 
 describe("convertTypeAnnotations", () => {
     it("string", async () => {
@@ -34,6 +35,23 @@ describe("convertTypeAnnotations", () => {
     it("any", async () => {
         const v = await buildValidatorForType("any")
         expectPass(v(5))
+    })
+
+    it("named", async () => {
+        Type.registerType("Name", Type.String)
+        const v = await buildValidatorForType("Name")
+        expectPass(v("HELLO"))
+    })
+
+    it("type literal", async () => {
+        const v = await buildValidatorForType("{ name: string, age: number }")
+        expectPass(v({ name: 'fred', age: 4 }))
+        expectPass(v({ age: 4, name: 'fred' }))
+
+        expectFail(v({ name: 'fred' }))
+        expectFail(v({ age: 20 }))
+        expectFail(v({ name: 'fred', age: 'fred' }))
+        expectFail(v(5))
     })
 })
 
