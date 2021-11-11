@@ -1,6 +1,7 @@
 // This set of named validators should include all the built-in validators for typescript
 const NAMED_VALIDATORS = {
-  Array: (params) => ArrayValidator(params[0])
+  Array: (params) => ArrayValidator(params[0]),
+  Record: (params) => Record(params[0], params[1])
 }
 
 const OK = { status: "ok" }
@@ -31,6 +32,22 @@ function Number(val) {
   return (typeof(val) === "number") 
     ? OK
     : FAIL
+}
+
+function Record(keyType, valueType) {
+  return (o) => validateRecord(keyType, valueType, o)
+}
+function validateRecord(keyType, valueType, o) {
+  if (o !== null && typeof o === "object" && !Array.isArray(o)) {
+    for (const [key, value] of Object.entries(o)) {
+      if (keyType(key).status === "fail" || valueType(value).status === "fail") {
+        return FAIL
+      }
+    }
+    return OK
+  } else {
+    return FAIL
+  }
 }
 
 function Boolean(val) {
@@ -137,6 +154,7 @@ module.exports = {
   Union,
   Intersection,
   Boolean,
+  Record,
   Never,
   Any,
   Object: ObjectValidator,

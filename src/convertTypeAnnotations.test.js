@@ -36,6 +36,14 @@ describe("convertTypeAnnotations", () => {
         expectPass(v([1,2]))
     })
 
+    it("record builtin", async () => {
+        const v = await buildValidatorForType("Record<string, number>")
+        expectPass(v({ a: 5, b: 5 }))
+        expectPass(v({}))
+        expectFail(v({a: 1, b: "b"}))
+        expectFail(v(true))
+    })
+
     it("never", async () => {
         const v = await buildValidatorForType("never")
         expectFail(v(5))
