@@ -20,6 +20,10 @@ function String(val) {
     : FAIL
 }
 
+function Never() { return FAIL }
+
+function Any() { return OK }
+
 function Number(val) {
   return (typeof(val) === "number") 
     ? OK
@@ -105,6 +109,8 @@ module.exports = {
   Union,
   Intersection,
   Boolean,
+  Never,
+  Any,
   Object: ObjectValidator,
   Optional,
   Array: ArrayValidator
