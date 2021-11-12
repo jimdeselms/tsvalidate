@@ -6,6 +6,7 @@ function convertTypeAnnotation(annotation) {
     const expr = buildExpr(annotation)
     return expr
 }
+
 function buildExpr(annotation) {
     switch(annotation.type) {
         case "TSStringKeyword": {

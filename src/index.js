@@ -145,6 +145,10 @@ function validateLiteral(expected, actual) {
   return actual === expected ? OK : FAIL
 }
 
+function tsValidate() {
+  // voodoo - this does nothing; it's the validator that does all the work.
+}
+
 module.exports = {
   registerType,
   Named,
@@ -160,5 +164,6 @@ module.exports = {
   Object: ObjectValidator,
   Optional,
   Array: ArrayValidator,
-  Tuple
+  Tuple,
+  tsValidate
 }
