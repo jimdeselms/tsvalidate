@@ -3,8 +3,8 @@ const { instrumentTypeChecksPlugin } = require('./plugin')
 
 describe("plugin", () => {
     it("simple non-named validations", () => {
-        expectPass("Type.tsValidate<number>(5)")
-        expectFail("Type.tsValidate<number>('a')")
+       expectPass("Type.tsValidate<number>(5)")
+       expectFail("Type.tsValidate<number>('a')")
     })
 
     it("understands type aliases", () => {
@@ -28,17 +28,17 @@ function expectPass(code) {
 }
 
 function expectFail(code) {
-    try {
-        runCode(code)
-    } catch {
-        return
-    }
+     try {
+         runCode(code)
+     } catch(err) {
+         return
+     }
 
-    throw new Error("Expected expression to fail")
+     throw new Error("Expected expression to fail")
 }
 
 function runCode(code) {
-    const output = babel.transformSync(`const Type = require('.'); ${code}`, {
+    const output = babel.transformSync("const Type=require('.');" + code, {
         plugins: [ instrumentTypeChecksPlugin ],
         filename: "myfile.ts",
         presets: ['@babel/preset-typescript']

@@ -1,10 +1,10 @@
 const babel = require('@babel/core')
-const t = require('@babel/types')
 const { convertTypeAnnotation } = require('./convertTypeAnnotation')
 
 const code = "const Type = require('.'); type A = string; Type.tsValidate<A>(5);"
 
-function instrumentTypeChecksPlugin() {
+function instrumentTypeChecksPlugin(opts) {
+    const t = opts.types 
     return {
         visitor: {
             CallExpression(path) {
@@ -22,30 +22,32 @@ function instrumentTypeChecksPlugin() {
                 const validator = convertTypeAnnotation(path.node.typeAnnotation)
                 const id = path.node.id.name
 
-                replaceWithCallToRegisterType(path, id, validator)
+                replaceWithCallToRegisterType(t, path, id, validator)
             },
 
             TSInterfaceDeclaration(path) {
                 const validator = convertTypeAnnotation(path.node)
                 const id = path.node.id.name
 
-                replaceWithCallToRegisterType(path, id, validator)
+                replaceWithCallToRegisterType(t, path, id, validator)
             },
 
             ClassDeclaration(path) {
                 const validator = convertTypeAnnotation(path.node)
                 const id = path.node.id.name
 
-                replaceWithCallToRegisterType(path, id, validator)
+                replaceWithCallToRegisterType(t, path, id, validator)
             }
         }
     }
 }
 
-function replaceWithCallToRegisterType(path, id, validator) {
+function replaceWithCallToRegisterType(t, path, id, validator) {
+    const callee = t.callExpression(t.identifier('require'), [t.stringLiteral('.')])
+
     path.replaceWith(t.expressionStatement(
         t.callExpression(
-            t.memberExpression(t.identifier("Type"), t.identifier("registerType")),
+            t.memberExpression(callee, t.identifier("registerType")),
                 [
                     t.stringLiteral(id),
                     validator
