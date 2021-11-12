@@ -87,6 +87,44 @@ function buildExpr(annotation) {
                 [ t.objectExpression(properties) ]
             )
         }
+        case "TSInterfaceDeclaration": {
+            const properties = []
+
+            for (const node of annotation.body.body) {
+                const innerValidator = buildExpr(node.typeAnnotation.typeAnnotation)
+                const property = node.optional
+                    ? t.callExpression(
+                        t.memberExpression(t.identifier("Type"), t.identifier("Optional")),
+                        [ innerValidator ]
+                      )
+                    : innerValidator
+                properties.push(t.objectProperty(t.stringLiteral(node.key.name), property))
+            }
+
+            return t.callExpression(
+                t.memberExpression(t.identifier("Type"), t.identifier("Object")),
+                [ t.objectExpression(properties) ]
+            )
+        }
+        case "ClassDeclaration": {
+            const properties = []
+
+            for (const node of annotation.body.body) {
+                const innerValidator = buildExpr(node.typeAnnotation.typeAnnotation)
+                const property = node.optional
+                    ? t.callExpression(
+                        t.memberExpression(t.identifier("Type"), t.identifier("Optional")),
+                        [ innerValidator ]
+                      )
+                    : innerValidator
+                properties.push(t.objectProperty(t.stringLiteral(node.key.name), property))
+            }
+
+            return t.callExpression(
+                t.memberExpression(t.identifier("Type"), t.identifier("Object")),
+                [ t.objectExpression(properties) ]
+            )
+        }
         default: {
             throw new Error("Unknown annotation type " + annotation?.type)
         }

@@ -22,20 +22,38 @@ function instrumentTypeChecksPlugin() {
                 const validator = convertTypeAnnotation(path.node.typeAnnotation)
                 const id = path.node.id.name
 
-                path.replaceWith(t.expressionStatement(
-                        t.callExpression(
-                            t.memberExpression(t.identifier("Type"), t.identifier("registerType")),
-                            [
-                                t.stringLiteral(id),
-                                validator
-                            ]
-                        )
-                    )
-                )
-                path.skip()
+                replaceWithCallToRegisterType(path, id, validator)
+            },
+
+            TSInterfaceDeclaration(path) {
+                const validator = convertTypeAnnotation(path.node)
+                const id = path.node.id.name
+
+                replaceWithCallToRegisterType(path, id, validator)
+            },
+
+            ClassDeclaration(path) {
+                const validator = convertTypeAnnotation(path.node)
+                const id = path.node.id.name
+
+                replaceWithCallToRegisterType(path, id, validator)
             }
         }
     }
+}
+
+function replaceWithCallToRegisterType(path, id, validator) {
+    path.replaceWith(t.expressionStatement(
+        t.callExpression(
+            t.memberExpression(t.identifier("Type"), t.identifier("registerType")),
+                [
+                    t.stringLiteral(id),
+                    validator
+                ]
+            )
+        )
+    )
+    path.skip()
 }
 
 module.exports = {
