@@ -8,7 +8,8 @@ const OK = { status: "ok" }
 const FAIL = { status: "fail" }
 
 function registerType(name, validator) {
-  NAMED_VALIDATORS[name] = validator
+  // This needs to be smarter to deal with type parameters
+  NAMED_VALIDATORS[name] = () => validator
 }
 
 function Named(name, typeParameters=[]) {
@@ -145,8 +146,10 @@ function validateLiteral(expected, actual) {
   return actual === expected ? OK : FAIL
 }
 
-function tsValidate() {
-  // voodoo - this does nothing; it's the validator that does all the work.
+function tsValidate(result) {
+  if (result.status !== "ok") {
+    throw new Error("FAIL!")
+  }
 }
 
 module.exports = {

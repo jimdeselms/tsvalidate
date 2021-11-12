@@ -2,9 +2,9 @@ const babel = require('@babel/core')
 const t = require('@babel/types')
 const { convertTypeAnnotation } = require('./convertTypeAnnotation')
 
-const code = "const Type = require('.'); Type.tsValidate<number>(5)"
+const code = "const Type = require('.'); type A = string; Type.tsValidate<A>(5);"
 
-function myPlugin() {
+function instrumentTypeChecksPlugin() {
     return {
         visitor: {
             CallExpression(path) {
@@ -16,15 +16,28 @@ function myPlugin() {
                         path.node.arguments = [ validatorCall ]
                     }
                 }
+            },
+
+            TSTypeAliasDeclaration(path) {
+                const validator = convertTypeAnnotation(path.node.typeAnnotation)
+                const id = path.node.id.name
+
+                path.replaceWith(t.expressionStatement(
+                        t.callExpression(
+                            t.memberExpression(t.identifier("Type"), t.identifier("registerType")),
+                            [
+                                t.stringLiteral(id),
+                                validator
+                            ]
+                        )
+                    )
+                )
+                path.skip()
             }
         }
     }
 }
 
-const output = babel.transformSync(code, {
-    plugins: [ myPlugin ],
-    filename: "myfile.ts",
-    presets: ['@babel/preset-typescript']
-})
-
-console.log(output.code)
+module.exports = {
+    instrumentTypeChecksPlugin
+}

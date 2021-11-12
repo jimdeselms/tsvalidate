@@ -55,7 +55,7 @@ describe("convertTypeAnnotations", () => {
     })
 
     it("named", async () => {
-        Type.registerType("Name", () => Type.String)
+        Type.registerType("Name", Type.String)
         const v = await buildValidatorForType("Name")
         expectPass(v("HELLO"))
     })
