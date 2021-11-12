@@ -1,4 +1,5 @@
 const babel = require('@babel/core')
+const t = require('@babel/types')
 const { convertTypeAnnotation } = require('./convertTypeAnnotation')
 const Type = require('.')
 
@@ -106,7 +107,10 @@ async function buildValidatorForType(type) {
     const statement = ast.program.body[0]
     const id = statement.declarations[0].id
     
-    return convertTypeAnnotation(id.typeAnnotation.typeAnnotation)
+    const ast2 = convertTypeAnnotation(id.typeAnnotation.typeAnnotation)
+    const result = babel.transformFromAstSync(t.program([t.expressionStatement(ast2)])).code
+
+    return eval(result.slice(0,-1))
 }
 
 function expectPass(expr) {

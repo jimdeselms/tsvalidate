@@ -9,7 +9,6 @@ function myPlugin() {
                 if (path.node?.callee?.name === "tsValidate") {
                     if (path.node.typeParameters?.params?.length === 1) {
                         const annotation = path.node.typeParameters.params[0]
-                        console.log(annotation)
                     }
                 }
             }
