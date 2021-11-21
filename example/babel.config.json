@@ -1,4 +1,10 @@
 {
-    "plugins": [],
-    "presets": ["@babel/preset-typescript"]
+    "presets": [
+            [
+                "@babel/preset-typescript",
+                {
+                    "extensions": ".ts"
+                }
+            ]
+    ]
 }
