@@ -1,3 +1,7 @@
-import * as Type from '@jimdeselms/validate-ts'
+const Type = require('@jimdeselms/validate-ts')
 
-Type.tsValidate<number>(50)
+interface Person {
+    name: string
+    age: number
+}
+Type.tsValidate<Person>({ name: "Jim", age: "51" })
