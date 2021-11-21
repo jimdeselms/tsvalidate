@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "babel --extensions .ts src -d lib",
+    "build": "babel src -d lib",
     "prestart": "npm run build",
     "start": "node lib/index.js"
   },
