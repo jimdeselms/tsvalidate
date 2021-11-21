@@ -1,6 +1,6 @@
 {
   "name": "@jimdeselms/validate-ts",
-  "version": "0.0.0-pre.3",
+  "version": "0.0.0-pre.4",
   "description": "",
   "main": "src/index.js",
   "scripts": {

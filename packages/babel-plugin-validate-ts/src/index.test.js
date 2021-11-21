@@ -21,6 +21,10 @@ describe("plugin", () => {
         expectPass("class A { name: string; age?: number }; Type.tsValidate<A>({ name: 'jim' })")
         expectFail("class A { name: string }; Type.tsValidate<A>({ nam: 'fred' })")
     })
+
+    it("understands builtin types", () => {
+        expectPass("interface A { name: string }; Type.tsValidate<Partial<A>>({ name: 'jim' })")
+    })
 })
 
 function expectPass(code) {
