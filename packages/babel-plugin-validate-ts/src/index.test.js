@@ -38,7 +38,7 @@ function expectFail(code) {
 }
 
 function runCode(code) {
-    const output = babel.transformSync("const Type=require('.');" + code, {
+    const output = babel.transformSync("const Type=require('@jimdeselms/validate-ts');" + code, {
         plugins: [ instrumentTypeChecksPlugin ],
         filename: "myfile.ts",
         presets: ['@babel/preset-typescript']

@@ -1,0 +1,22 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jim",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/preset-typescript": "^7.16.0",
+    "@babel/types": "^7.16.0",
+    "@jimdeselms/babel-plugin-validate-ts": "0.0.0-pre.3"
+  },
+  "dependencies": {
+    "@jimdeselms/validate-ts": "0.0.0-pre.2"
+  }
+}

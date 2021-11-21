@@ -6,6 +6,9 @@
   "scripts": {
     "test": "jest"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Jim",
   "license": "ISC",
   "devDependencies": {
