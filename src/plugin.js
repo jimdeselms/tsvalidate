@@ -5,7 +5,7 @@ const code = "const Type = require('.'); type A = string; Type.tsValidate<A>(5);
 
 function instrumentTypeChecksPlugin(opts) {
     const t = opts.types 
-    return {
+    return new opts.Plugin('check-ts-types', {
         visitor: {
             CallExpression(path) {
                 if (path.node?.callee?.object?.name === "Type" && path.node?.callee?.property?.name === "tsValidate") {
@@ -39,7 +39,7 @@ function instrumentTypeChecksPlugin(opts) {
                 replaceWithCallToRegisterType(t, path, id, validator)
             }
         }
-    }
+    })
 }
 
 function replaceWithCallToRegisterType(t, path, id, validator) {

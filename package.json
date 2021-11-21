@@ -1,7 +1,8 @@
 {
-  "version": "0.1.0",
+  "name": "babel-plugin-validate-typescript",
+  "version": "0.0.0-pre.0",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "src"
@@ -13,12 +14,11 @@
     "test": "jest"
   },
   "peerDependencies": {},
-  "name": "tsvalidate",
   "author": "Jim",
   "devDependencies": {
     "jest": "^25.5.4"
   },
-  "description": "Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.",
+  "description": "",
   "dependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
