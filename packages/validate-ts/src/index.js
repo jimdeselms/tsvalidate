@@ -59,20 +59,27 @@ function Boolean(val) {
 }
 
 function ObjectValidator(types) {
-  return (o) => validateObject(types, true, o)
+  return (o) => validateObject(types, {}, o)
 }
 
 function Partial(types) {
-  return (o) => validateObject(types, false, o)
+  return (o) => validateObject(types, {optional: true}, o)
 }
 
-function validateObject(types, required, o) {
+function Required(types) {
+  return (o) => validateObject(types, {required: true}, o)
+}
+
+function validateObject(types, opts, o) {
+  opts = opts ?? {}
+
   if (typeof(o) !== "object" || Array.isArray(o) || o === null) return FAIL
 
   for (const [key, validator] of Object.entries(types)) {
     const value = o[key]
-    if (value === undefined && !required) {
-      continue
+    if (value === undefined) {
+      if (opts.optional) continue
+      if (opts.required) return FAIL
     }
 
     if (validator(value).status === "fail") {
@@ -173,6 +180,7 @@ module.exports = {
   Boolean,
   Record,
   Partial,
+  Required,
   Never,
   Any,
   Object: ObjectValidator,
