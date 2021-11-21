@@ -38,6 +38,16 @@ describe("validate", () => {
         expectFail(validate({ name: "Jim", age: "52" }))
     })
 
+    test("partial", () => {
+        const validate = Type.Partial({
+            name: Type.String,
+            age: Type.Number
+        })
+
+        expectPass(validate({ name: "Jim" }))
+        expectFail(validate({ name: "Jim", age: "hello" }))
+    })
+
     test("union", () => {
         const validate = Type.Union(Type.String, Type.Number)
         expectPass(validate(50))

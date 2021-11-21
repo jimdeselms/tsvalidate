@@ -1,7 +1,8 @@
 // This set of named validators should include all the built-in validators for typescript
 const NAMED_VALIDATORS = {
   Array: (params) => ArrayValidator(params[0]),
-  Record: (params) => Record(params[0], params[1])
+  Record: (params) => Record(params[0], params[1]),
+  Partial: (params) => Partial(params[0])
 }
 
 const OK = { status: "ok" }
@@ -58,14 +59,23 @@ function Boolean(val) {
 }
 
 function ObjectValidator(types) {
-  return (o) => validateObject(types, o)
+  return (o) => validateObject(types, true, o)
 }
 
-function validateObject(types, o) {
+function Partial(types) {
+  return (o) => validateObject(types, false, o)
+}
+
+function validateObject(types, required, o) {
   if (typeof(o) !== "object" || Array.isArray(o) || o === null) return FAIL
 
   for (const [key, validator] of Object.entries(types)) {
-    if (validator(o[key]).status === "fail") {
+    const value = o[key]
+    if (value === undefined && !required) {
+      continue
+    }
+
+    if (validator(value).status === "fail") {
       return FAIL
     }
   }
@@ -162,6 +172,7 @@ module.exports = {
   Intersection,
   Boolean,
   Record,
+  Partial,
   Never,
   Any,
   Object: ObjectValidator,
