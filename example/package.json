@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "babel --extensions .ts src -d lib",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "npm run build",
+    "start": "node lib/index.js"
   },
   "author": "Jim",
   "license": "ISC",
@@ -14,9 +16,9 @@
     "@babel/core": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
     "@babel/types": "^7.16.0",
-    "@jimdeselms/babel-plugin-validate-ts": "0.0.0-pre.3"
+    "@jimdeselms/babel-plugin-validate-ts": "0.0.0-pre.5"
   },
   "dependencies": {
-    "@jimdeselms/validate-ts": "0.0.0-pre.2"
+    "@jimdeselms/validate-ts": "0.0.0-pre.3"
   }
 }

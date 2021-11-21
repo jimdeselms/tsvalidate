@@ -5,7 +5,7 @@ const { convertTypeAnnotation } = require('./convertTypeAnnotation')
 
 const VALIDATE_TS_PACKAGE = "@jimdeselms/validate-ts"
 
-const instrumentTypeChecksPlugin = ((api, options) => {
+const instrumentTypeChecksPlugin = declare((api, options) => {
     api.assertVersion(7)
 
     return {
@@ -62,6 +62,4 @@ function replaceWithCallToRegisterType(t, path, id, validator) {
     path.skip()
 }
 
-module.exports = {
-    instrumentTypeChecksPlugin
-}
+module.exports = instrumentTypeChecksPlugin

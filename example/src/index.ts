@@ -1,1 +1,3 @@
-let x: number = 5
+import * as Type from '@jimdeselms/validate-ts'
+
+Type.tsValidate<number>(50)

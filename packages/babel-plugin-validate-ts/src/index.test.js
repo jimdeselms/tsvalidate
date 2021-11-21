@@ -1,5 +1,5 @@
 const babel = require('@babel/core')
-const { instrumentTypeChecksPlugin } = require('.')
+const instrumentTypeChecksPlugin = require('.')
 
 describe("plugin", () => {
     it("simple non-named validations", () => {

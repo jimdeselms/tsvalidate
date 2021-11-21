@@ -1,4 +1,7 @@
 {
+    "plugins": [
+        "@jimdeselms/validate-ts"
+    ],
     "presets": [
             [
                 "@babel/preset-typescript",
