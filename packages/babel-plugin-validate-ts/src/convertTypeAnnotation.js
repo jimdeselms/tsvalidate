@@ -131,11 +131,6 @@ function buildExpr(annotation) {
     }
 }
 
-function toCode(expr) {
-    const result = babel.transformFromAstSync(t.program([t.expressionStatement(expr)]))
-    return result.code.slice(0, -1)
-}
-
 module.exports = {
     convertTypeAnnotation
 }
