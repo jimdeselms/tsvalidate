@@ -1,8 +1,12 @@
+
 // This set of named validators should include all the built-in validators for typescript
+// You can find built in types here: https://www.typescriptlang.org/docs/handbook/utility-types.html
 const NAMED_VALIDATORS = {
   Array: (params) => ArrayValidator(params[0]),
   Record: (params) => Record(params[0], params[1]),
-  Partial: (params) => Partial(params[0])
+  Partial: (params) => Partial(params[0]),
+  Readonly: (params) => params[0],
+  Pick: (params) => Pick(params[0], params[1])
 }
 
 const OK = { status: "ok" }
@@ -10,16 +14,34 @@ const FAIL = { status: "fail" }
 
 function registerType(name, validator) {
   // This needs to be smarter to deal with type parameters
-  NAMED_VALIDATORS[name] = () => validator
+  const newValidator = () => validator
+  copyProps(validator, newValidator)
+  NAMED_VALIDATORS[name] = newValidator
 }
 
-function Named(name, typeParameters=[]) {
-  return (o) => {
-    const validator = NAMED_VALIDATORS[name]?.(typeParameters)
-    return validator?.(o) ?? FAIL
+function copyProps(from, to) {
+  if (from && to) {
+    for (const prop of Object.getOwnPropertyNames(from)) {
+      if (prop !== "caller" && prop !== "callee" && prop !== "arguments") {
+        to[prop] = from[prop]
+      }
+    }
   }
 }
 
+function Named(name, typeParameters=[]) {
+  const orig = NAMED_VALIDATORS[name]
+  const validator = orig?.(typeParameters)
+
+  const newValidator = (o) => {
+    return validator?.(o) ?? FAIL
+  }
+
+  copyProps(orig, newValidator)
+
+  return newValidator
+}
+ 
 function String(val) {
   return (typeof(val) === "string") 
     ? OK
@@ -59,14 +81,20 @@ function Boolean(val) {
 }
 
 function ObjectValidator(types) {
-  return (o) => validateObject(types, {}, o)
+  const validator = (o) => validateObject(types, {}, o)
+  validator.__types = types
+  return validator
 }
 
-function Partial(types) {
+function Partial(type) {
+  const types = type?.__types
+  
   return (o) => validateObject(types, {optional: true}, o)
 }
 
-function Required(types) {
+function Required(type) {
+  const types = type?.__types
+
   return (o) => validateObject(types, {required: true}, o)
 }
 
@@ -121,7 +149,11 @@ function validateTuple(types, array) {
 }
 
 function Union(...types) {
-  return (o) => validateUnion(types, o)
+  const validator = (o) => validateUnion(types, o)
+
+  validator.__value = types.map(t => t?.__value)
+
+  return validator
 }
 function validateUnion(types, obj) {
   for (const validator of types) {
@@ -156,7 +188,9 @@ function validateOptional(type, o) {
 }
 
 function Literal(val) {
-  return (o) => validateLiteral(val, o)
+  const validator = (o) => validateLiteral(val, o)
+  validator.__value = val
+  return validator
 }
 
 function validateLiteral(expected, actual) {
@@ -166,6 +200,35 @@ function validateLiteral(expected, actual) {
 function tsValidate(result) {
   if (result.status !== "ok") {
     throw new Error("FAIL!")
+  }
+}
+
+function Pick(type, thingsToPick) {
+  return (o) => validatePick(type, thingsToPick, o)
+}
+function validatePick(type, thingsToPick, o) {
+  if (typeof o !== "object") {
+    return FAIL
+  }
+
+  const keys = typeof(thingsToPick?.__value) === "string"
+    ? [thingsToPick.__value]
+    : thingsToPick?.__value
+
+  if (keys) {
+    for (const key of keys) {
+      const validator = type[key]
+      if (!validator) {
+        return FAIL
+      }
+
+      if (!validator(o)) {
+        return FAIL
+      }
+    }
+    return OK
+  } else {
+    return FAIL
   }
 }
 
@@ -180,6 +243,7 @@ module.exports = {
   Boolean,
   Record,
   Partial,
+  Pick,
   Required,
   Never,
   Any,

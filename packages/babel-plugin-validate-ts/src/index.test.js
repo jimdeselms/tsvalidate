@@ -25,6 +25,15 @@ describe("plugin", () => {
     it("understands builtin types", () => {
         expectPass("interface A { name: string }; Type.tsValidate<Partial<A>>({ name: 'jim' })")
     })
+
+    it("understands Partial builtin", () => {
+        expectPass("interface A { name: string, age: number }; Type.tsValidate<Partial<A>>({ name: 'jim' })")
+        expectFail("interface A { name: string, age: number }; Type.tsValidate<Partial<A>>({ name: 50 })")
+    })
+
+    it("understands Pick builtin", () => {
+        expectPass("interface A { name: string, age: number }; Type.tsValidate<Pick<A, 'name'>>({name: 'jim' })")
+    })
 })
 
 function expectPass(code) {

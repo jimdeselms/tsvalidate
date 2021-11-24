@@ -39,20 +39,31 @@ describe("validate", () => {
     })
 
     test("partial", () => {
-        const validate = Type.Partial({
+        const validate = Type.Partial(Type.Object({
             name: Type.String,
             age: Type.Number
-        })
+        }))
 
         expectPass(validate({ name: "Jim" }))
         expectFail(validate({ name: "Jim", age: "hello" }))
     })
 
+    test("partial named", () => {
+        Type.registerType("Person", Type.Object({
+            name: Type.String,
+            age: Type.Number
+        }))
+        const validate = Type.Partial(Type.Named("Person"))
+
+        expectPass(validate({ name: "Jim" }))
+//        expectFail(validate({ name: "Jim", age: "hello" }))
+    })
+
     test("required", () => {
-        const validate = Type.Required({
+        const validate = Type.Required(Type.Object({
             name: Type.Optional(Type.String),
             age: Type.Optional(Type.Number)
-        })
+        }))
 
         expectPass(validate({ name: "Jim", age: 20 }))
         expectFail(validate({ name: "Jim" }))
@@ -105,6 +116,17 @@ describe("validate", () => {
         expectFail(objWithOptionalNumber(null))
         expectFail(objWithOptionalNumber(undefined))
         expectFail(objWithOptionalNumber({ age: "a" }))
+    })
+
+    test("pick", () => {
+        const person = {
+            name: Type.String,
+            age: Type.Number,
+            state: Type.String
+        }
+
+        const pick = Type.Pick(person, Type.Union(Type.Literal("name")))
+        expectPass(pick({ name: "Jim" }))
     })
 })
 
