@@ -6,7 +6,8 @@ const NAMED_VALIDATORS = {
   Record: (params) => Record(params[0], params[1]),
   Partial: (params) => Partial(params[0]),
   Readonly: (params) => params[0],
-  Pick: (params) => Pick(params[0], params[1])
+  Pick: (params) => Pick(params[0], params[1]),
+  Omit: (params) => Omit(params[0], params[1])
 }
 
 const OK = { status: "ok" }
@@ -211,18 +212,56 @@ function validatePick(type, thingsToPick, o) {
     return FAIL
   }
 
+  const validators = type?.__types ?? type
+
   const keys = typeof(thingsToPick?.__value) === "string"
     ? [thingsToPick.__value]
     : thingsToPick?.__value
 
   if (keys) {
     for (const key of keys) {
-      const validator = type[key]
+      const validator = validators[key]
       if (!validator) {
         return FAIL
       }
 
-      if (!validator(o)) {
+      const currValue = o?.[key]
+
+      if (validator(currValue).status === "fail") {
+        return FAIL
+      }
+    }
+    return OK
+  } else {
+    return FAIL
+  }
+}
+
+function Omit(type, thingsToPick) {
+  return (o) => validateOmit(type, thingsToPick, o)
+}
+function validateOmit(type, thingsToOmit, o) {
+  if (typeof o !== "object") {
+    return FAIL
+  }
+
+  const validators = type?.__types ?? type
+
+  const keysToOmit = typeof(thingsToOmit?.__value) === "string"
+    ? [thingsToOmit.__value]
+    : thingsToOmit?.__value
+
+  const keysToInclude = Object.keys(type).filter(k => !keysToOmit.includes(k))
+  
+  if (keysToInclude) {
+    for (const key of keysToInclude) {
+      const validator = validators[key]
+      if (!validator) {
+        return FAIL
+      }
+
+      const currValue = o?.[key]
+      if (validator(currValue).status === "fail") {
         return FAIL
       }
     }
@@ -244,6 +283,7 @@ module.exports = {
   Record,
   Partial,
   Pick,
+  Omit,
   Required,
   Never,
   Any,

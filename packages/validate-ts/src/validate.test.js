@@ -56,7 +56,21 @@ describe("validate", () => {
         const validate = Type.Partial(Type.Named("Person"))
 
         expectPass(validate({ name: "Jim" }))
-//        expectFail(validate({ name: "Jim", age: "hello" }))
+        expectFail(validate({ name: "Jim", age: "hello" }))
+    })
+
+    test("pick named", () => {
+        Type.registerType("Person", Type.Object({
+            name: Type.String,
+            age: Type.Number
+        }))
+        const validate = Type.Pick(Type.Named("Person"), Type.Union(
+            Type.Literal("name")
+        ))
+
+        expectPass(validate({ name: "Jim" }))
+        expectFail(validate({ name: 20 }))
+        expectPass(validate({ name: "Jim", age: "hello" }))
     })
 
     test("required", () => {
@@ -127,6 +141,19 @@ describe("validate", () => {
 
         const pick = Type.Pick(person, Type.Union(Type.Literal("name")))
         expectPass(pick({ name: "Jim" }))
+    })
+
+    test("omit", () => {
+        const person = {
+            name: Type.String,
+            age: Type.Number,
+            state: Type.String
+        }
+
+        const omit = Type.Omit(person, Type.Union(Type.Literal("name")))
+        expectPass(omit({ age: 20, state: "MA" }))
+        expectPass(omit({ age: 20, state: "MA", name: 10 }))
+        expectFail(omit({ age: "20", state: "MA" }))
     })
 })
 
