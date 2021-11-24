@@ -73,6 +73,20 @@ describe("validate", () => {
         expectPass(validate({ name: "Jim", age: "hello" }))
     })
 
+    test("omit named", () => {
+        Type.registerType("Person", Type.Object({
+            name: Type.String,
+            age: Type.Number
+        }))
+        const validate = Type.Omit(Type.Named("Person"), Type.Union(
+            Type.Literal("name")
+        ))
+
+        expectPass(validate({ age: 20 }))
+        expectFail(validate({ age: "abc" }))
+        expectPass(validate({ name: 2, age: 20 }))
+    })
+
     test("required", () => {
         const validate = Type.Required(Type.Object({
             name: Type.Optional(Type.String),

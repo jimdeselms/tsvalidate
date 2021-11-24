@@ -251,7 +251,7 @@ function validateOmit(type, thingsToOmit, o) {
     ? [thingsToOmit.__value]
     : thingsToOmit?.__value
 
-  const keysToInclude = Object.keys(type).filter(k => !keysToOmit.includes(k))
+  const keysToInclude = Object.keys(validators).filter(k => !keysToOmit.includes(k))
   
   if (keysToInclude) {
     for (const key of keysToInclude) {
