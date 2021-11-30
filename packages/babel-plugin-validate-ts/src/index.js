@@ -49,15 +49,17 @@ const instrumentTypeChecksPlugin = declare((api, options) => {
 function replaceWithCallToRegisterType(t, path, id, validator) {
     const callee = t.callExpression(t.identifier('require'), [t.stringLiteral(VALIDATE_TS_PACKAGE)])
 
-    path.replaceWith(t.expressionStatement(
-        t.callExpression(
-            t.memberExpression(callee, t.identifier("registerType")),
-                [
-                    t.stringLiteral(id),
-                    validator
-                ]
+    path.replaceWithMultiple([
+        t.expressionStatement(
+            t.callExpression(
+                t.memberExpression(callee, t.identifier("registerType")),
+                    [
+                        t.stringLiteral(id),
+                        validator
+                    ]
+                )
             )
-        )
+        ]
     )
     path.skip()
 }
